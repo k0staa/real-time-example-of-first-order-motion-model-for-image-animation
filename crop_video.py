@@ -45,8 +45,8 @@ def join(tube_bbox, bbox):
     yB = max(tube_bbox[3], bbox[3])
     return (xA, yA, xB, yB)
 
-
-def compute_bbox(start, end, fps, tube_bbox, frame_shape, inp, image_shape, increase_area=0.1):
+def compute_crop(tube_bbox,increase_area,frame_shape):
+    crop = {}
     left, top, right, bot = tube_bbox
     width = right - left
     height = bot - top
@@ -60,16 +60,27 @@ def compute_bbox(start, end, fps, tube_bbox, frame_shape, inp, image_shape, incr
     right = int(right + width_increase * width)
     bot = int(bot + height_increase * height)
 
-    top, bot, left, right = max(0, top), min(bot, frame_shape[0]), max(0, left), min(right, frame_shape[1])
-    h, w = bot - top, right - left
+    crop["top"], bot, crop["left"], right = max(0, top), min(bot, frame_shape[0]), max(0, left), min(right, frame_shape[1])
+    (crop["h"],crop["w"])  = bot - crop["top"], right - crop["left"]
+    return crop
 
+def compute_bbox(start, end, fps, tube_bbox, frame_shape, inp, image_shape, increase_area=0.1):
     start = start / fps
     end = end / fps
     time = end - start
 
     scale = f'{image_shape[0]}:{image_shape[1]}'
 
-    return f'ffmpeg -i {inp} -ss {start} -t {time} -filter:v "crop={w}:{h}:{left}:{top}, scale={scale}" crop.mp4'
+    crop = compute_crop(tube_bbox,increase_area,frame_shape)
+    settings = {
+        "inp": inp,
+        "start": start,
+        "time": time,
+        "end": end,
+        "scale": scale,
+        **crop
+    }
+    return f'ffmpeg -i {inp} -ss {start} -t {time} -filter:v "crop={crop["w"]}:{crop["h"]}:{crop["left"]}:{crop["top"]}, scale={scale}" crop.mp4', settings
 
 
 def compute_bbox_trajectories(trajectories, fps, frame_shape, args):

@@ -12,11 +12,25 @@ This project is result of the work of many people. Please, take a look at the [C
 This is what I added/improved:
 1. Jupyter Notebook with instructions and explanations
 2. Docker configuration that allows you to launch whole project and being able to use the camera with OpenCV in Jupyter Notebook
-3. Added `ffmpeg-python` to the installed packages and created methods for saving video files directly from the camera and converting files prepared earlier together with the crop and scale filter
-4. (IMHO :smiley:) I simplified the code in jupyter a bit and made it more practical
-5. Ability to run the code without CUDA
+3. I added `ffmpeg-python` to installed packages and created methods for saving video files directly from the camera.
+4. I also changed the` process_video` method so that it returns not only the `ffmpeg` command in the form of a string, but also parameters as a dictionary, thanks to which you can automatically convert previously prepared files together with the clipping and scaling filter.
+4. (IMHO :smiley:) I simplified the code in jupyter a bit and made it more practical for non dev peoples.
+5. Ability to run the code without CUDA - slow but for previously prepared films it can be used :grin:
 
 Checkout my [blog post](http://code-addict.pl/real-time-image-animation/) where I describe everything with more details.
+
+## Passing camera to docker container
+The project uses a camera and X server from the host machine, so in order to be able to operate it from the docker container I added several parameters to the `docker run` command in `run.sh` and `run_no_cuda.sh` scripts:
+```
+--device=/dev/video0:/dev/video0 \
+--env DISPLAY=$DISPLAY \
+--env="QT_X11_NO_MITSHM=1" \
+-v /dev/video0:/dev/video0 \
+-v /tmp/.X11-unix:/tmp/.X11-unix:ro  \
+```
+Not all of them are necessary in every case, but I added them to avoid problems on different machines.
+**Also note that I added** `xhost +` command in scripts which allow to any user to connect to the X server. Scripts are ending with `xhost -` which turn it off.
+If any problems with the passing of camera to the docker container occures, please check whether your camera is in `/dev/video0` path and change it in scripts in the case of a different address.
 
 ## Installation and run
 In order to run the project you need to have Docker installed on your machine. I have been tested this project using Docker 19.03.10 version with `nvidia-container-toolkit 1.1.2-1` (if you don't have CUDA compatible graphics card you don't need `nvidia-container-toolkit`). 
@@ -66,3 +80,5 @@ If you want to train the model yourself, you must follow the instructions of the
 If you like this project give your support to original authors of this project by giving :star2: to author's projects!
 
 
+## License
+Check [LICENSE.md](LICENSE.md) file.
