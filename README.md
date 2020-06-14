@@ -13,7 +13,7 @@ This is what I added/improved:
 1. Jupyter Notebook with instructions and explanations
 2. Docker configuration that allows you to launch whole project and being able to use the camera with OpenCV in Jupyter Notebook
 3. I added `ffmpeg-python` to installed packages and created methods for saving video files directly from the camera.
-4. I also changed the` process_video` method so that it returns not only the `ffmpeg` command in the form of a string, but also parameters as a dictionary, thanks to which you can automatically convert previously prepared files together with the clipping and scaling filter.
+4. I also changed the `process_video` method so that it returns not only the `ffmpeg` command in the form of a string, but also parameters as a dictionary, thanks to which you can automatically convert previously prepared files together with the clipping and scaling filter.
 4. (IMHO :smiley:) I simplified the code in jupyter a bit and made it more practical for non dev peoples.
 5. Ability to run the code without CUDA - slow but for previously prepared films it can be used :grin:
 
