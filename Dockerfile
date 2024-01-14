@@ -1,4 +1,4 @@
-FROM nvcr.io/nvidia/cuda:10.0-cudnn7-runtime-ubuntu18.04
+FROM nvcr.io/nvidia/pytorch:23.12-py3
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get -qq update \
  && DEBIAN_FRONTEND=noninteractive apt-get -qqy install python3-pip ffmpeg git less nano libsm6 libxext6 libxrender-dev \
@@ -7,12 +7,13 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -qq update \
 COPY . /app/
 WORKDIR /app
 
-RUN pip3 install \
-  https://download.pytorch.org/whl/cu100/torch-1.0.0-cp36-cp36m-linux_x86_64.whl \
-  git+https://github.com/1adrianb/face-alignment \
-  -r requirements.txt
+RUN pip3 install scipy==1.11.4 opencv-python==4.8.0.74
 
-RUN pip3 install notebook ffmpeg-python gdown
+RUN pip3 install -r requirements.txt
+
+RUN pip install git+https://github.com/1adrianb/face-alignment
+
+RUN pip3 install notebook ffmpeg-python gdown==4.6.3
 
 
 EXPOSE 8888
