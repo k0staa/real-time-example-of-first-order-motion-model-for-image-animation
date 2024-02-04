@@ -29,7 +29,7 @@ The project uses a camera and X server from the host machine, so in order to be 
 -v /tmp/.X11-unix:/tmp/.X11-unix:ro  \
 ```
 Not all of them are necessary in every case, but I added them to avoid problems on different machines.
-**Also note that I added** `xhost +` command in scripts which allow to any user to connect to the X server. Scripts are ending with `xhost -` which turn it off.
+**Also note that I added** `xhost +` command in scripts which allow to any user to connect to the X server. Scripts are ending with `xhost -` which turn it off (`xorg-xhost` need to be installed).
 If any problems with the passing of camera to the docker container occures, please check whether your camera is in `/dev/video0` path and change it in scripts in the case of a different address.
 
 ## Installation and run

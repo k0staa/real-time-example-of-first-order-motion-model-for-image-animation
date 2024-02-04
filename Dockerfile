@@ -1,18 +1,25 @@
-FROM nvcr.io/nvidia/cuda:10.0-cudnn7-runtime-ubuntu18.04
+FROM nvcr.io/nvidia/cuda:12.1.0-cudnn8-devel-ubuntu20.04
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get -qq update \
- && DEBIAN_FRONTEND=noninteractive apt-get -qqy install python3-pip ffmpeg git less nano libsm6 libxext6 libxrender-dev \
- && rm -rf /var/lib/apt/lists/*
+ && DEBIAN_FRONTEND=noninteractive apt-get -qqy install  wget python3.9 \
+	 ffmpeg git less nano libsm6 libxext6 libxrender-dev python3.9-distutils \ 
+         && rm -rf /var/lib/apt/lists/*
+
+
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.9 1
+
+RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py
 
 COPY . /app/
 WORKDIR /app
 
-RUN pip3 install \
-  https://download.pytorch.org/whl/cu100/torch-1.0.0-cp36-cp36m-linux_x86_64.whl \
-  git+https://github.com/1adrianb/face-alignment \
-  -r requirements.txt
 
-RUN pip3 install notebook ffmpeg-python gdown
+RUN pip3.9 install -r requirements.txt
+RUN pip3.9 install torch torchvision --index-url https://download.pytorch.org/whl/cu118 
+RUN pip3.9 install git+https://github.com/1adrianb/face-alignment@v1.4.1
+
+RUN pip3.9 install notebook==7.0.7
+ 
 
 
 EXPOSE 8888
